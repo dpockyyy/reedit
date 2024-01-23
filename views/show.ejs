@@ -1,0 +1,61 @@
+<main class="show">
+    <div class="show-window">
+        <h1 class="post-header">
+            <div>Post details</div>
+            <div> <a href="javascript:history.back()">X Close</a></div>
+        </h1>
+        <div class="show-gridwrapper">
+            <div class="show-post-card">
+                <p><span class="subreedit-sig">/r/<%= post.subreedit %> <span class="user-sig"> Posted by u/<%= post.username %></span></span></p>
+                <p><%= post.title %></p>
+                <img src="<%= post.image_url%>" alt="">
+                
+                <p><%= post.description %> </p>
+                
+                <% if (currentUser === post.username) { %> 
+                    <form action="/posts/<%= post.id %>?_method=delete" method="post">
+                        <button>delete</button>
+                    </form>
+                   
+                    <a href="/posts/<%= post.id %>/edit">edit post</a>
+                <% } %>
+                
+                <% if (currentUser) { %>
+                    <p>Comment as <%= currentUser %></p>
+                    
+                <% } else { %>
+                    Please <a href="/login">login</a> to leave a comment
+                <% } %>
+                        <div class="comment-window">
+                            <form action="/comments" method="post">
+                                <textarea name="description" class="comment-box" placeholder="What are your thoughts?"></textarea>
+                                <input type="hidden" name="postId" value="<%= post.id %>">
+                                <button>Comment</button>
+                            </form>
+                        </div>
+                        
+                <div class="comment-display">
+                    
+                    <% if (comments.rowCount !== 0) { %>
+                        <% for (let comment of comments.rows) { %>
+                            <div class="comment-card">
+                                <p class="comment-sig"><span><%= comment.username %> timestamp placeholder</span></p>
+                                <p class="comment-description"><%= comment.description %></p>
+                                <p class="comment-interface">^ 0 v Reply Share</p>
+                            </div>
+                        <% } %>
+                    <% } else { %>
+                        <p>No comments yet</p>
+                    <% } %>
+                </div>
+
+            </div>
+            <div class="show-aside">
+                <h1>About Community</h1>
+            </div>
+        </div>
+
+    </div>
+
+</main>
+

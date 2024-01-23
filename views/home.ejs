@@ -1,0 +1,25 @@
+<% if (currentUser) { %>
+    <p><a href="/new">Create Post</a></p>
+    
+<% } else { %>
+    Please <a href="/login">login</a> to create a new post
+<% } %>
+
+<div class="gridwrapper">
+    <div>
+        <% for (const post of posts) { %>
+            <div class="post-card">
+                <p class="sig"><span class="subreedit-sig">r/<%= post.subreedit%></span> <span class="user-sig">Posted by u/<%= post.username %></span></p>
+                <h2><a href="/posts/<%=post.id%>"><%= post.title %></h2></a>
+            
+                <img src="<%= post.image_url%>" alt="">
+            
+                    <p><%= post.description %></p>
+            </div>
+        <% } %>
+    </div>
+
+    <div class="aside">
+        <h1>About Community</h1>
+    </div>
+</div>

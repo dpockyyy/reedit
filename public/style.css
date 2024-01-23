@@ -1,0 +1,126 @@
+* {
+    box-sizing: border-box;
+    /* border: 1px solid red; */
+    margin: 0;
+}
+
+img {
+    width: 200px;
+}
+
+body {
+    text-align: center;
+    background-color: #dae0e6;
+ }
+
+.banner {
+    display: flex;
+    background-color: white;
+    justify-content: space-between;
+    position: fixed;
+    width: 100%;
+    top: 0;
+}
+
+.sticky {
+    position: fixed;
+}
+
+.spacer {
+    height: 50px;
+}
+
+.gridwrapper {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    width: 60%;
+    text-align: center;
+    margin: 0 auto;
+    column-gap: 1vw;
+}
+
+.aside {
+    background-color: white;
+}
+
+.post-card {
+    background-color: white;
+    margin: 1vw;
+    text-align: left;
+    padding: 0.5vw;
+}
+
+.post-card img {
+    text-align: center;
+    display: block;
+    align-self: center;
+}
+
+.show {
+    background-color: #2e2f30;
+}
+
+.show-gridwrapper {
+    display: grid;
+    grid-template-columns: 2.5fr 1fr;
+    width: 85%;
+    margin: 1vw auto;
+    column-gap: 1vw;
+}
+
+.show-window {
+    width: 80%;
+    margin: 0 auto;
+    background-color: #dae0e6;
+    min-height: 100vh;
+}
+
+.show-post-card, .show-aside {
+    background-color: mistyrose;
+}
+
+.show-post-card {
+    text-align: left;
+
+}
+
+.post-header {
+    color: white;
+    background-color: black;
+    display: flex;
+    justify-content: space-between;
+}
+
+.subreedit-sig {
+    font-weight: bold;
+}
+
+.user-sig {
+    color: #a6a9aa; 
+}
+
+.sig {
+    margin: 0.2vw;
+}
+
+.comment-box {
+    width: 80%;
+    height: 8vw;
+}
+
+.comment-sig {
+    margin: 0.5vw;
+}
+
+.comment-display {
+    margin: 0.5vw;
+}
+
+.comment-description {
+    margin: 0.5vw;
+    margin-left: 1vw;
+}
+
+.comment-interface {
+    margin: 1vw;
+}
