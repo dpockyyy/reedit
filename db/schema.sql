@@ -7,7 +7,8 @@ CREATE TABLE posts (
     image_url TEXT,
     description TEXT,
     username TEXT,
-    subreedit TEXT
+    subreedit TEXT,
+    time TIMESTAMP
 );
 
 CREATE TABLE users (
@@ -20,5 +21,12 @@ CREATE TABLE users (
 CREATE TABLE comments (
     post_id INTEGER,
     description TEXT,
-    username TEXT
+    username TEXT,
+    time TIMESTAMP
+);
+
+CREATE TABLE votetracker (
+    post_id INTEGER,
+    username TEXT,
+    vote TEXT
 );

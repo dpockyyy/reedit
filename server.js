@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const port = 8080
+const port = process.env.PORT || 3000;
 const expressLayouts = require ('express-ejs-layouts')
 const methodOverride = require('method-override')
 require('dotenv').config()
@@ -18,10 +18,11 @@ app.use(methodOverride('_method'))
 app.set('view engine', 'ejs')
 
 const requestLogger = require('./middlewares/request_logger')
+
 app.use(requestLogger)
 
 app.use(session({
-    secret: process.env.SECRET,
+    secret: process.env.SECRET || 'mistyrose',
     resave: false,
     saveUninitialized: true
 }))
@@ -30,40 +31,163 @@ app.use(setCurrentUser)
 
 app.use(express.urlencoded({ extended: true}))
 
+let currentUser = ''
+
 app.get('/', (req, res) => {
     res.redirect('/posts')
 })
 
+
 app.get('/posts', (req, res) => {
-    db.query(`SELECT * FROM posts;`, (err, result) => {
+    currentUser = res.locals.currentUser
+    db.query(`SELECT * FROM posts ORDER BY time DESC;`, (err, result) => {
         if (err) {
             console.log(err)
         }
         let posts = result.rows
-        console.log(result.rows)
-        res.render('home', {posts: posts})
+        let sql = `
+        SELECT * FROM votetracker WHERE post_id = $1 AND username = $2;
+        `
+        
+        for (let post of posts) {
+        db.query(sql, [post.id, currentUser], (err, result) => {
+                if (currentUser) {
+                    if (err) {
+                        console.log(err)
+                    } else if (result.rowCount === 1 && result.rows[0].vote === 'up') {
+                        post.upVote = `https://i.postimg.cc/5NRQrjT8/uptick-toggled.png`
+                        post.downVote = `https://i.postimg.cc/VNHH2sYp/downtick.png`
+                    } else if (result.rowCount === 1 && result.rows[0].vote === 'down') {
+                        post.upVote = `https://i.postimg.cc/52bGCk77/uptick.png`
+                        post.downVote = `https://i.postimg.cc/qv66H4HS/downtick-toggled.png`
+                    } else {
+                        post.upVote = `https://i.postimg.cc/52bGCk77/uptick.png`
+                        post.downVote = `https://i.postimg.cc/VNHH2sYp/downtick.png`
+                    }
+                } else {
+                    post.upVote = `https://i.postimg.cc/52bGCk77/uptick.png`
+                    post.downVote = `https://i.postimg.cc/VNHH2sYp/downtick.png`
+                }
+                // console.log(result.rows) 
+                // console.log(posts)
+            })
+        }
+        setTimeout(() => {
+            res.render('home', {
+                posts: posts
+            })
+            
+        }, '100');
+        
     })
 })
 
-app.get('/posts/new', ensureLoggedIn, (req, res) => {
+app.get('/posts/new', (req, res) => {
     res.render('new')
 })
 
+// app.locals.checkVote = function (post_id) {
+//     console.log(currentUser)
+//     if (currentUser) {
+//         let sql = `
+//         SELECT * FROM votetracker WHERE post_id = $1 AND username = $2;
+//         `
+//         db.query(sql, [post_id, currentUser], (err, result) => {
+//             if (err) {
+//                 console.log(err)    
+//             } else if (result.rowCount === 1) {
+//                 if (result.rows[0].vote === 'up') {
+//                     return `https://i.postimg.cc/5NRQrjT8/uptick-toggled.png`
+//                 } else {
+//                     return `https://i.postimg.cc/qv66H4HS/downtick-toggled.png`
+//                 }
+//             } else {
+//                 return `https://i.postimg.cc/52bGCk77/uptick.png`
+//             }
+            
+//             console.log(result)
+
+//         })
+//     } else {
+//         console.log('nay')
+//         return `https://i.postimg.cc/52bGCk77/uptick.png`
+//     }
+    
+//     // return 'https://i.postimg.cc/5NRQrjT8/uptick-toggled.png'
+// }
+
+app.locals.voteCount = function(id) {
+    let votes = 'as'
+    db.query(`SELECT upvotes FROM posts WHERE id = ${id};`, (err, result) => {
+        if (err) {
+            console.log(err)
+        }
+        console.log(result.rows[0].upvotes)
+        votes = result.rows[0].upvotes
+        return votes
+    })
+}
+
+app.locals.timeDifference = function (currDate) {
+    let date = new Date();
+    date = new Date(date.toISOString().slice(0, 19).replace('T', ' '))
+    let diff = date - currDate
+    let seconds = diff/1000
+    if (seconds < 60) {
+        return '<1 min ago'
+    } else if (seconds / 60 < 60) {
+        return `${Math.round(seconds/60)} mins ago`
+    } else if (seconds / 60 / 60 < 24) {
+        if (seconds/60/60 < 2) {
+            return `${Math.round(seconds/60/60)} hr ago`
+        } else {
+            return `${Math.round(seconds/60/60)} hrs ago`
+        }
+    } else if (seconds / 60 / 60 / 24 < 1) {
+        if (seconds/ 60/ 60/ 24 < 2) {
+            return `${Math.round(seconds/60/60/24)} day ago`
+        } else {
+            return `${Math.round(seconds/60/60/24)} days ago`
+        }
+    } else if (seconds / 60 / 60 / 24 / 30 < 12) {
+        if (seconds/ 60 / 60 / 24 / 30 < 2) {
+            return `${Math.round(seconds/60/60/24/30)} month ago`
+        } else {
+            return `${Math.round(seconds/60/60/24/30)} months ago`
+        }
+       
+    } else {
+        if (seconds/ 60 / 60 / 24 / 30 / 12 < 2) {
+            return `${Math.round(seconds/60/60/24/30/12)} year ago`
+        } else {
+            return `${Math.round(seconds/60/60/24/30/12)} years ago`
+        }
+    }
+}
+
+
+
 app.post('/posts', (req, res) => {
+    let currentDate = new Date();
     let title = req.body.title
     let imageUrl = req.body.image_url
     let description = req.body.description
     let username = req.session.username
     let subreedit = req.body.subreedit
+    let upvotes = req.body.upvotes
+    let time = currentDate.toISOString().slice(0, 19).replace('T', ' ')
+
+    // console.log(time.toLocaleString())
+    // console.log(req.body)
 
     const sql = `
     INSERT INTO posts
-    (title, image_url, description, username, subreedit)
+    (title, upvotes, image_url, description, username, subreedit, time)
     VALUES
-    ($1, $2, $3, $4, $5);
+    ($1, $2, $3, $4, $5, $6, $7);
     `
 
-    db.query(sql, [title, imageUrl, description, username, subreedit], (err, result) => {
+    db.query(sql, [title, upvotes, imageUrl, description, username, subreedit, time], (err, result) => {
         if (err) {
             console.log(err) 
         }
@@ -115,13 +239,43 @@ app.get('/posts/:id', (req, res) => {
             console.log(err)
         }
         let post = result.rows[0]
+        
         db.query(`SELECT * FROM comments WHERE post_id = $1;`, [id], (err, result) => {
             let comments = result
             console.log(comments)
-            res.render('show', {
-                post: post,
-                comments: comments
+        
+            let sql = `
+            SELECT * FROM votetracker WHERE post_id = $1 AND username = $2;
+            `
+
+            db.query(sql, [post.id, currentUser], (err, result) => {
+                if (currentUser) {
+                    if (err) {
+                        console.log(err)
+                    } else if (result.rowCount === 1 && result.rows[0].vote === 'up') {
+                        post.upVote = `https://i.postimg.cc/5NRQrjT8/uptick-toggled.png`
+                        post.downVote = `https://i.postimg.cc/VNHH2sYp/downtick.png`
+                    } else if (result.rowCount === 1 && result.rows[0].vote === 'down') {
+                        post.upVote = `https://i.postimg.cc/52bGCk77/uptick.png`
+                        post.downVote = `https://i.postimg.cc/qv66H4HS/downtick-toggled.png`
+                    } else {
+                        post.upVote = `https://i.postimg.cc/52bGCk77/uptick.png`
+                        post.downVote = `https://i.postimg.cc/VNHH2sYp/downtick.png`
+                    }
+                } else {
+                    post.upVote = `https://i.postimg.cc/52bGCk77/uptick.png`
+                    post.downVote = `https://i.postimg.cc/VNHH2sYp/downtick.png`
+                }
+                // console.log(result.rows) 
+                // console.log(posts)
+                setTimeout(() => {
+                    res.render('show', {
+                    post: post,
+                    comments: comments,
+                }) 
+            }, '100');
             })
+            
         })
     })
 })
@@ -142,19 +296,127 @@ app.delete('/posts/:id', (req, res) => {
     })
 })
 
+
+app.get('/user/:username', (req, res) => {
+    let user = req.params.username
+
+    let sql = `
+    SELECT * FROM posts
+    WHERE username = $1
+    ORDER BY time DESC;
+    `
+    currentUser = res.locals.currentUser
+
+    db.query(sql, [user], (err, result) => {
+        if (err) {
+            console.log(err)
+        }
+        let posts = result.rows
+
+        let sql = `
+        SELECT * FROM votetracker WHERE post_id = $1 AND username = $2;
+        `
+        
+        for (let post of posts) {
+        db.query(sql, [post.id, currentUser], (err, result) => {
+                if (currentUser) {
+                    if (err) {
+                        console.log(err)
+                    } else if (result.rowCount === 1 && result.rows[0].vote === 'up') {
+                        post.upVote = `https://i.postimg.cc/5NRQrjT8/uptick-toggled.png`
+                        post.downVote = `https://i.postimg.cc/VNHH2sYp/downtick.png`
+                    } else if (result.rowCount === 1 && result.rows[0].vote === 'down') {
+                        post.upVote = `https://i.postimg.cc/52bGCk77/uptick.png`
+                        post.downVote = `https://i.postimg.cc/qv66H4HS/downtick-toggled.png`
+                    } else {
+                        post.upVote = `https://i.postimg.cc/52bGCk77/uptick.png`
+                        post.downVote = `https://i.postimg.cc/VNHH2sYp/downtick.png`
+                    }
+                } else {
+                    post.upVote = `https://i.postimg.cc/52bGCk77/uptick.png`
+                    post.downVote = `https://i.postimg.cc/VNHH2sYp/downtick.png`
+                }
+                // console.log(result.rows) 
+                // console.log(posts)
+            })
+        }
+        setTimeout(() => {
+            res.render('subreedit', {
+                posts: posts
+            })
+            
+        }, '100');
+    })
+})
+
+app.get('/r/:subreedit', (req, res) => {
+    let subreedit = req.params.subreedit
+
+    let sql = `
+    SELECT * FROM posts 
+    WHERE subreedit = $1
+    ORDER BY time DESC;
+    `
+    currentUser = res.locals.currentUser
+
+    db.query(sql, [subreedit], (err, result) => {
+        if (err) {
+            console.log(err)
+        }
+        let posts = result.rows
+
+        let sql = `
+        SELECT * FROM votetracker WHERE post_id = $1 AND username = $2;
+        `
+        
+        for (let post of posts) {
+        db.query(sql, [post.id, currentUser], (err, result) => {
+                if (currentUser) {
+                    if (err) {
+                        console.log(err)
+                    } else if (result.rowCount === 1 && result.rows[0].vote === 'up') {
+                        post.upVote = `https://i.postimg.cc/5NRQrjT8/uptick-toggled.png`
+                        post.downVote = `https://i.postimg.cc/VNHH2sYp/downtick.png`
+                    } else if (result.rowCount === 1 && result.rows[0].vote === 'down') {
+                        post.upVote = `https://i.postimg.cc/52bGCk77/uptick.png`
+                        post.downVote = `https://i.postimg.cc/qv66H4HS/downtick-toggled.png`
+                    } else {
+                        post.upVote = `https://i.postimg.cc/52bGCk77/uptick.png`
+                        post.downVote = `https://i.postimg.cc/VNHH2sYp/downtick.png`
+                    }
+                } else {
+                    post.upVote = `https://i.postimg.cc/52bGCk77/uptick.png`
+                    post.downVote = `https://i.postimg.cc/VNHH2sYp/downtick.png`
+                }
+                // console.log(result.rows) 
+                // console.log(posts)
+            })
+        }
+        setTimeout(() => {
+            res.render('subreedit', {
+                posts: posts
+            })
+            
+        }, '100');
+    })
+    
+})
+
+
 app.post('/comments', (req, res) => {
-    console.log(req.body)
-    console.log(req.body.postId)
+    // console.log(req.body)
+    // console.log(req.body.postId)
+    let currentDate = new Date();
     let postId = req.body.postId
     let description = req.body.description
     let user = res.locals.currentUser
-
+    let time = currentDate.toISOString().slice(0, 19).replace('T', ' ')
     const sql = `INSERT INTO comments
-    (post_id, description, username)
-    VALUES ($1, $2, $3);
+    (post_id, description, username, time)
+    VALUES ($1, $2, $3, $4);
     `
 
-    db.query(sql, [postId, description, user], (err, result) => {
+    db.query(sql, [postId, description, user, time], (err, result) => {
         if (err) {
             console.log(err)
         }
@@ -162,23 +424,11 @@ app.post('/comments', (req, res) => {
     })
 } )
 
-app.locals.hasComments = function (id) {
-    let sql = `
-    SELECT * FROM comments where post_id = $1
-    `
-    db.query(sql, [id], (err, result) => {
-        if (err) {
-            console.log(err)
-        } else {
-            console.log(result)
-            if (result.rowCount === 0) {
-                return false
-            } else {
-                return true
-            }
-        }
-    })
-}
+
+
+
+
+
 
 
 
@@ -255,6 +505,180 @@ app.post('/users', (req, res) => {
         })
     })
 })
+
+app.post('/upvote', ensureLoggedIn, (req, res) => {
+
+    let id = req.body.postId
+    let user = res.locals.currentUser
+    
+    let sql = `
+    SELECT * FROM votetracker
+    WHERE post_id = $1 AND username = $2;
+    `
+
+    console.log(req)
+
+    db.query(sql, [id, user], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else if (result.rowCount === 0) {
+            db.query(`INSERT INTO votetracker (post_id, username, vote) values ($1, $2, 'up');`, [id, user], (err, result) => {
+                db.query(`SELECT * FROM posts where id = ${id};`, (err, result) => {
+                    if (err) {
+                        console.log(err)
+                    } 
+                    // console.log(result)
+                    let upvotes = result.rows[0].upvotes
+                    upvotes++
+
+                    // console.log(upvotes)
+                    db.query(`UPDATE posts SET upvotes = $1 WHERE id = $2;`, [upvotes, id], (err, result) => {
+                        if (err) {
+                            console.log(err)
+                        } else {
+                            res.redirect('/posts')
+                        }
+                    })
+                })
+            })
+        } else if (result.rows[0].vote === "down") {
+            db.query(`UPDATE votetracker SET vote = 'up' WHERE post_id = ${id};`,  (err, result) => {
+                if (err)  {
+                    console.log(err)
+                }   
+                db.query(`SELECT * FROM posts where id = ${id};`, (err, result) => {
+                    if (err) {
+                        console.log(err)
+                    } 
+                    let upvotes = result.rows[0].upvotes
+                    upvotes += 2
+    
+                    console.log(upvotes)
+                    db.query(`UPDATE posts SET upvotes = $1 WHERE id = $2;`, [upvotes, id], (err, result) => {
+                        if (err) {
+                            console.log(err)
+                        } else {
+                            res.redirect('/posts')
+                        }
+                    })
+                })
+            })
+        } else {
+            db.query(`DELETE FROM votetracker where post_id = $1 AND username = $2 AND vote = 'up';`, [id, user], (err, result) => {
+                if (err)  {
+                    console.log(err)
+                }   
+                db.query(`SELECT * FROM posts where id = ${id};`, (err, result) => {
+                    if (err) {
+                        console.log(err)
+                    } 
+                    let upvotes = result.rows[0].upvotes
+                    upvotes--
+    
+                    console.log(upvotes)
+                    db.query(`UPDATE posts SET upvotes = $1 WHERE id = $2;`, [upvotes, id], (err, result) => {
+                        if (err) {
+                            console.log(err)
+                        } else {
+                            res.redirect('/posts')
+                        }
+                    })
+                })
+            })
+        } 
+    })
+})
+
+app.post('/downvote', ensureLoggedIn, (req, res) => {
+
+    let id = req.body.postId
+    let user = res.locals.currentUser
+    
+    let sql = `
+    SELECT * FROM votetracker
+    WHERE post_id = $1 AND username = $2;
+    `
+
+
+    db.query(sql, [id, user], (err, result) => {
+        if (err) {
+            console.log(err)
+            console.log(result)
+        } else if (result.rowCount === 0) {
+            db.query(`INSERT INTO votetracker (post_id, username, vote) values ($1, $2, 'down');`, [id, user], (err, result) => {
+                if (err) {
+                    console.log(err)
+                }
+                db.query(`SELECT * FROM posts where id = ${id};`, (err, result) => {
+                    if (err) {
+                        console.log(err)
+                    } 
+                    console.log(result)
+                    let upvotes = result.rows[0].upvotes
+                    upvotes--
+
+                    console.log(upvotes)
+                    db.query(`UPDATE posts SET upvotes = $1 WHERE id = $2;`, [upvotes, id], (err, result) => {
+                        if (err) {
+                            console.log(err)
+                        } else {
+                            res.redirect('/posts')
+                        }
+                    })
+                })
+            })
+        } else if(result.rows[0].vote === "up") {
+            db.query(`UPDATE votetracker SET vote = 'down' WHERE post_id = ${id};`,  (err, result) => {
+                if (err)  {
+                    console.log(err)
+                }   
+                db.query(`SELECT * FROM posts where id = ${id};`, (err, result) => {
+                    if (err) {
+                        console.log(err)
+                    } 
+                    let upvotes = result.rows[0].upvotes
+                    upvotes -= 2
+    
+                    console.log(upvotes)
+                    db.query(`UPDATE posts SET upvotes = $1 WHERE id = $2;`, [upvotes, id], (err, result) => {
+                        if (err) {
+                            console.log(err)
+                        } else {
+                            res.redirect('/posts')
+                        }
+                    })
+                })
+            })
+        }else {
+            db.query(`DELETE FROM votetracker where post_id = $1 AND username = $2 AND vote ='down';`, [id, user], (err, result) => {
+                if (err)  {
+                    console.log(err)
+                }   
+                db.query(`SELECT * FROM posts where id = ${id};`, (err, result) => {
+                    if (err) {
+                        console.log(err)
+                    } 
+                    let upvotes = result.rows[0].upvotes
+                    upvotes++
+    
+                    console.log(upvotes)
+                    db.query(`UPDATE posts SET upvotes = $1 WHERE id = $2;`, [upvotes, id], (err, result) => {
+                        if (err) {
+                            console.log(err)
+                        } else {
+                            res.redirect('/posts')
+                        }
+                    })
+                })
+            })
+        } 
+    })
+})
+
+
+
+
+
 
 app.listen(port, () => {
     console.log(`server listening on port ${port}`)

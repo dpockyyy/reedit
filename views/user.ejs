@@ -1,13 +1,5 @@
-
 <div class="gridwrapper">
     <div>
-        
-        <% if (currentUser) { %>
-            <p class="post-topper"><a href="/posts/new">Create Post</a></p>
-            
-        <% } else { %>
-            <p class="post-topper">Please <a href="/login">login</a> to create a new post</p>
-        <% } %>
         <% for (const post of posts) { %>
             <div class="post-card">
                 <div class="upvote">
@@ -34,12 +26,6 @@
     </div>
 
     <div class="aside">
-        <img src="https://i.postimg.cc/j5HS84D5/reddit-logo.png" alt="" class="hero-logo">
-        <h3 class="aside-header">Home</h3>
-        <p class="aside-description">Your personal Reedit frontpage. Come here to check in with your favorite communities</p>
-        <div class="aside-flex">
-
-            <button class="aside-button"><a href="/posts/new">Create Post</a></button>
-        </div>
+        <h1>About Community</h1>
     </div>
 </div>

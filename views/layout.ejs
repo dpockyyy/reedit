@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Reedit</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
@@ -11,18 +11,22 @@
     
     
     <header class="banner">
-        <h1><a href="/posts">Reedit</a></h1>
+        <div class="banner-flex">
+            <img src="https://i.postimg.cc/pVSvMPTD/banner-logo.png" alt="" class="banner-logo">
+            <h1><a href="/posts">reedit</a></h1>
+
+        </div>
         
         <% if (currentUser) { %> 
-            <div>
-                <p>welcome back <%= currentUser %>!</p>
+            <div class="banner-flex">
+                <p><a href="/user/<%= currentUser %>"><%= currentUser %></a></p>
                 
                 <form action="/logout?_method=delete" method="post">
-                    <button>logout</button>
+                    <button class="banner-button">logout</button>
                 </form>
             </div>
         <% } else { %>
-                <p>
+                <p class="banner-flex">
                     <a href="/login">login</a>
                 </p>
                 

@@ -1,52 +1,66 @@
 <main class="show">
     <div class="show-window">
         <h1 class="post-header">
-            <div>Post details</div>
+            <div><%= post.title %></div>
             <div> <a href="javascript:history.back()">X Close</a></div>
         </h1>
         <div class="show-gridwrapper">
             <div class="show-post-card">
-                <p><span class="subreedit-sig">/r/<%= post.subreedit %> <span class="user-sig"> Posted by u/<%= post.username %></span></span></p>
-                <p><%= post.title %></p>
-                <img src="<%= post.image_url%>" alt="">
-                
-                <p><%= post.description %> </p>
-                
-                <% if (currentUser === post.username) { %> 
-                    <form action="/posts/<%= post.id %>?_method=delete" method="post">
-                        <button>delete</button>
+                <div class="show-upvote">
+                    <form action="/upvote" method="post">
+                        <button class="up-tick"><img src='<%= post.upVote %>' alt="" class="up-tick-img"></button>
+                        <input type="hidden" value="<%= post.id %>" name="postId">
                     </form>
-                   
-                    <a href="/posts/<%= post.id %>/edit">edit post</a>
-                <% } %>
-                
-                <% if (currentUser) { %>
-                    <p>Comment as <%= currentUser %></p>
+                    <%= post.upvotes %>
+                    <form action="/downvote" method="post">
+                        <button class="down-tick"><img src="<%= post.downVote %>" alt="" class="up-tick-img"></button>
+                        <input type="hidden" value="<%= post.id %>" name="postId">
+                    </form>
+                </div>
+                <div>
+                    <p><span class="subreedit-sig"><a href='/r/<%= post.subreedit %>'>/r/<%= post.subreedit %></a></span><span class="user-sig"> Posted by <a href='/user/<%= post.username %>'>u/<%= post.username %></a> <%= timeDifference(post.time) %></span></p>
+                    <p><%= post.title %></p>
+                    <img src="<%= post.image_url%>" alt="">
                     
-                <% } else { %>
-                    Please <a href="/login">login</a> to leave a comment
-                <% } %>
-                        <div class="comment-window">
-                            <form action="/comments" method="post">
-                                <textarea name="description" class="comment-box" placeholder="What are your thoughts?"></textarea>
-                                <input type="hidden" name="postId" value="<%= post.id %>">
-                                <button>Comment</button>
-                            </form>
-                        </div>
-                        
-                <div class="comment-display">
+                    <p><%= post.description %> </p>
                     
-                    <% if (comments.rowCount !== 0) { %>
-                        <% for (let comment of comments.rows) { %>
-                            <div class="comment-card">
-                                <p class="comment-sig"><span><%= comment.username %> timestamp placeholder</span></p>
-                                <p class="comment-description"><%= comment.description %></p>
-                                <p class="comment-interface">^ 0 v Reply Share</p>
-                            </div>
-                        <% } %>
-                    <% } else { %>
-                        <p>No comments yet</p>
+                    <% if (currentUser === post.username) { %> 
+                        <form action="/posts/<%= post.id %>?_method=delete" method="post">
+                            <button>delete</button>
+                        </form>
+                       
+                        <a href="/posts/<%= post.id %>/edit">edit post</a>
                     <% } %>
+                    
+                    <% if (currentUser) { %>
+                        <p>Comment as <%= currentUser %></p>
+                        
+                    <% } else { %>
+                        Please <a href="/login">login</a> to leave a comment
+                    <% } %>
+                            <div class="comment-window">
+                                <form action="/comments" method="post">
+                                    <textarea name="description" class="comment-box" placeholder="What are your thoughts?"></textarea>
+                                    <input type="hidden" name="postId" value="<%= post.id %>">
+                                    <button>Comment</button>
+                                </form>
+                            </div>
+                            
+                    <div class="comment-display">
+                        
+                        <% if (comments.rowCount !== 0) { %>
+                            <% for (let comment of comments.rows) { %>
+                                <div class="comment-card">
+                                    <p class="comment-sig"><a href='/user/<%= comment.username %>'><%= comment.username %></a><span class="user-sig"> <%= timeDifference(comment.time) %></span></p>
+                                    <p class="comment-description"><%= comment.description %></p>
+                                    <p class="comment-interface">^ 0 v Reply Share</p>
+                                </div>
+                            <% } %>
+                        <% } else { %>
+                            <p>No comments yet</p>
+                        <% } %>
+                    </div>
+
                 </div>
 
             </div>
