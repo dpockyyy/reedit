@@ -5,8 +5,9 @@
 }
 
 img {
-    width: 200px;
-}
+    display: block;
+    width: 50%;
+ } 
 
 body {
     text-align: center;
@@ -31,6 +32,7 @@ body {
     width: 2vw;
     float: left;
     margin-right: 0.1vw;
+    margin-left: 0.5vw;
 }
 
 .banner-flex {
@@ -41,6 +43,9 @@ body {
     font-weight: bold;
 }
 
+.banner-padding {
+    margin-right: 0.5vw;
+}
 .upvote {
     background-color: #f8f9fa;
     margin: 0;
@@ -52,7 +57,7 @@ body {
 }
 
 .spacer {
-    height: 50px;
+    height: 45px;
 }
 
 a {
@@ -62,12 +67,31 @@ a {
 .gridwrapper {
     display: grid;
     grid-template-columns:2fr 1fr;
-    width: 60%;
+    width: 55%;
     text-align: center;
     margin: 0 auto;
     column-gap: 1vw;
 }
 
+.main-title {
+    font-weight: 600;
+    margin-top: 0.5vw;
+    /* margin-bottom: 0.5vw; */
+}
+
+.img-container {
+    display:flex;
+    justify-content: center;
+    /* padding: 0.5vw; */
+    /* margin-bottom: 1vw; */
+}
+
+.main-img {
+    display: block;
+    width: 50%;
+    padding: 0.5vw;
+    margin-bottom: 0.5vw;
+}
 .aside {
     background-color: white;
     align-self: flex-start;
@@ -142,27 +166,49 @@ a {
 }
 
 .show-window {
-    width: 80%;
+    width: 67%;
     margin: 0 auto;
     background-color: #dae0e6;
     min-height: 100vh;
 }
 
-.show-post-card, .show-aside {
-    background-color: white;
+.show-main {
+    padding: 0.5vw;
 }
 
+.show-sig {
+    font-size: 0.75vw;
+    margin-bottom: 0.5vw;
+}
+
+.show-post-card, .show-aside {
+    background-color: white;
+    border-radius: 0.2vw;
+}
+
+.show-aside {
+    text-align: left;
+    padding: 0.5vw;
+    align-self: flex-start;
+}
 .show-post-card {
     text-align: left;
     display: grid;
     grid-template-columns: 0.2fr 5fr;
-
 }
 
+.show-description {
+    margin-bottom: 1vw;
+}
+
+.show-title {
+    margin-bottom: 0.5vw;
+}
 .show-upvote {
     background-color: white;
     margin: 0;
     text-align: center;
+    border-radius: 0.2vw;
 }
 
 .post-header {
@@ -171,6 +217,8 @@ a {
     display: flex;
     justify-content: space-between;
     padding: 0.5vw;
+    font-weight: 200;
+    color: #dae0e6;
 }
 
 .subreedit-sig {

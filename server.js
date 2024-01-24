@@ -342,7 +342,7 @@ app.get('/user/:username', (req, res) => {
             })
         }
         setTimeout(() => {
-            res.render('subreedit', {
+            res.render('user', {
                 posts: posts
             })
             

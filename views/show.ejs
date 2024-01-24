@@ -1,9 +1,9 @@
 <main class="show">
     <div class="show-window">
-        <h1 class="post-header">
+        <h4 class="post-header">
             <div><%= post.title %></div>
             <div> <a href="javascript:history.back()">X Close</a></div>
-        </h1>
+        </h4>
         <div class="show-gridwrapper">
             <div class="show-post-card">
                 <div class="show-upvote">
@@ -17,12 +17,15 @@
                         <input type="hidden" value="<%= post.id %>" name="postId">
                     </form>
                 </div>
-                <div>
-                    <p><span class="subreedit-sig"><a href='/r/<%= post.subreedit %>'>/r/<%= post.subreedit %></a></span><span class="user-sig"> Posted by <a href='/user/<%= post.username %>'>u/<%= post.username %></a> <%= timeDifference(post.time) %></span></p>
-                    <p><%= post.title %></p>
-                    <img src="<%= post.image_url%>" alt="">
+                <div class="show-main">
+                    <p class="show-sig"><span class="subreedit-sig"><a href='/r/<%= post.subreedit %>'>/r/<%= post.subreedit %></a></span><span class="user-sig"> Posted by <a href='/user/<%= post.username %>'>u/<%= post.username %></a> <%= timeDifference(post.time) %></span></p>
+                    <h4 class="show-title"><%= post.title %></h4>
+                    <div class="img-container">
+
+                        <img class="main-img" src="<%= post.image_url%>" alt="">
+                    </div>
                     
-                    <p><%= post.description %> </p>
+                    <p class="show-description"><%= post.description %> </p>
                     
                     <% if (currentUser === post.username) { %> 
                         <form action="/posts/<%= post.id %>?_method=delete" method="post">
@@ -65,7 +68,7 @@
 
             </div>
             <div class="show-aside">
-                <h1>About Community</h1>
+                <p><a href='/r/<%= post.subreedit %>'>r/<%= post.subreedit %></a></p>
             </div>
         </div>
 

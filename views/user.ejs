@@ -17,7 +17,10 @@
                     <p class="sig"><span class="subreedit-sig"><a href='/r/<%= post.subreedit %>'>r/<%= post.subreedit%></a></span> <span class="user-sig">Posted by <a href="/user/<%= post.username %>">u/<%= post.username %></a> <%= timeDifference(post.time) %></span></p>
                     <h2><a href="/posts/<%=post.id%>"><%= post.title %></h2></a>
                 
-                    <img src="<%= post.image_url%>" alt="">
+                    <div class="img-container">
+
+                        <img class="main-img" src="<%= post.image_url%>" alt="" class="main-img">
+                    </div>
                 
                     <p><%= post.description %></p>
                 </div>
@@ -26,6 +29,6 @@
     </div>
 
     <div class="aside">
-        <h1>About Community</h1>
+        <h1>u/<%= posts[0].username %></h1>
     </div>
 </div>
