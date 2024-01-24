@@ -1,9 +1,10 @@
+require('dotenv').config()
+
 const express = require('express')
 const app = express()
 const port = process.env.PORT || 3000;
 const expressLayouts = require ('express-ejs-layouts')
 const methodOverride = require('method-override')
-require('dotenv').config()
 const db = require('./db/index')
 const bcrypt = require('bcrypt')
 const ensureLoggedIn = require('./middlewares/ensure_logged_in')
