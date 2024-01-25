@@ -3,7 +3,7 @@ Reedit is a clone of the popular website 'Reddit' with limited functionality.  [
 
 ![Alt text](image.png)
 
-## Technolgies used
+## Technoligies used
 - Express, EJS
 - Javascript
 - HTML
