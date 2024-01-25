@@ -15,7 +15,7 @@
                 </div>
                 <div class="main-post-card">
                     <p class="sig"><span class="subreedit-sig"><a href='/r/<%= post.subreedit %>'>r/<%= post.subreedit%></a></span> <span class="user-sig">Posted by <a href="/user/<%= post.username %>">u/<%= post.username %></a> <%= timeDifference(post.time) %></span></p>
-                    <h2><a href="/posts/<%=post.id%>"><%= post.title %></h2></a>
+                    <h3 class="main-title"><a href="/posts/<%=post.id%>"><%= post.title %></h3></a>
                     
                     <div class="img-container">
                         <img src="<%= post.image_url%>" alt="" class="main-img">

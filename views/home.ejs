@@ -1,12 +1,11 @@
 
 <div class="gridwrapper">
     <div>
-        
         <% if (currentUser) { %>
-            <p class="post-topper"><a href="/posts/new">Create Post</a></p>
+            <p class="post-topper"><a href="/posts/new" class="home-login">Create Post</a></p>
             
         <% } else { %>
-            <p class="post-topper">Please <a href="/login">login</a> to create a new post</p>
+            <p class="post-topper">Please <a href="/login" class="home-login">login</a> to create a new post</p>
         <% } %>
         <% for (const post of posts) { %>
             <div class="post-card">
@@ -36,13 +35,19 @@
     </div>
 
     <div class="aside">
-        <img src="https://i.postimg.cc/j5HS84D5/reddit-logo.png" alt="" class="hero-logo">
-        <h3 class="aside-header">Home</h3>
-        <p class="aside-description">Your personal Reedit frontpage. Come here to check in with your favorite communities</p>
-        <div class="aside-flex">
-            <% if (currentUser) { %>
-            <button class="aside-button"><a href="/posts/new">Create Post</a></button>
-            <% } %>
+        <div class="aside-window">
+            <img src="https://i.postimg.cc/j5HS84D5/reddit-logo.png" alt="" class="hero-logo">
+            <h3 class="aside-header">Home</h3>
+            <p class="aside-description">Your personal Reedit frontpage. Come here to check in with your favorite communities</p>
+            <div class="aside-flex">
+                <% if (currentUser) { %>
+                <button class="aside-button"><a href="/posts/new">Create Post</a></button>
+                <% } %>
+            </div> 
+        </div>
+        <br>
+        <div class="aside-copyright">
+            <p>Reedit, Inc. &copy; 2024. All rights reserved.</p>
         </div>
     </div>
 </div>

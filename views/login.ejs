@@ -1,13 +1,22 @@
-<h2>login</h2>
+<div class="login-panel">
 
-<form action="/login" method="post">
-
-    <label for="">email</label>
-    <input type="email" name="email">
-
-    <label for="">password</label>
-    <input type="password" name="password">
-    <button>login</button>
-</form>
-
-<p> don't have an account? sign up <a href="/signup">here</a></p>
+    <div class="login-window">
+        <div class="login-bar">
+            <h2 class="login-title">Log In</h2>
+            <p class="back-button"><a href="javascript:history.back()">X</a></p>
+        </div>
+        
+        <form action="/login" method="post">
+        
+           
+            <input type="email" name="email" placeholder="Email*" class="login-input">
+            <br>
+            
+            <input type="password" name="password" placeholder="Password*" class="login-input">
+            <br>
+            <p class="login-spacer"> New to reedit? <a href="/signup" class="home-login">Sign Up</a></p>
+            <button class="login-input">Log In</button>
+        </form>
+        
+    </div>
+</div>

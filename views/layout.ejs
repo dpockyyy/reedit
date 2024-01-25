@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reedit</title>
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cabin">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Jost">
 </head>
 <body>
 
@@ -13,23 +15,22 @@
     <header class="banner">
         <div class="banner-flex">
             <img src="https://i.postimg.cc/pVSvMPTD/banner-logo.png" alt="" class="banner-logo">
-            <h1><a href="/posts">reedit</a></h1>
+            <h1 class="banner-title"><a href="/posts">reedit</a></h1>
 
         </div>
         
         <% if (currentUser) { %> 
-            <div class="banner-flex">
+            <div class="header-flex">
                 <p><a href="/user/<%= currentUser %>"><%= currentUser %></a></p>
                 
                 <form action="/logout?_method=delete" method="post">
-                    <button class="banner-button">logout</button>
+                    <button class="banner-button">Log Out</button>
                 </form>
             </div>
         <% } else { %>
                 <div class="banner-flex">
-                    <p class="banner-padding"><a href="/login">login</a></p>     <a href="/signup">sign up</a>
+                    <p class="banner-padding"><a href="/login">Log In</a></p>     <a href="/signup">Sign Up</a>
                 </div>
-                
         <% } %>
     </header>
     <div class="spacer"></div>

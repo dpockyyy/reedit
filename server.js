@@ -87,48 +87,6 @@ app.get('/posts/new', (req, res) => {
     res.render('new')
 })
 
-// app.locals.checkVote = function (post_id) {
-//     console.log(currentUser)
-//     if (currentUser) {
-//         let sql = `
-//         SELECT * FROM votetracker WHERE post_id = $1 AND username = $2;
-//         `
-//         db.query(sql, [post_id, currentUser], (err, result) => {
-//             if (err) {
-//                 console.log(err)    
-//             } else if (result.rowCount === 1) {
-//                 if (result.rows[0].vote === 'up') {
-//                     return `https://i.postimg.cc/5NRQrjT8/uptick-toggled.png`
-//                 } else {
-//                     return `https://i.postimg.cc/qv66H4HS/downtick-toggled.png`
-//                 }
-//             } else {
-//                 return `https://i.postimg.cc/52bGCk77/uptick.png`
-//             }
-            
-//             console.log(result)
-
-//         })
-//     } else {
-//         console.log('nay')
-//         return `https://i.postimg.cc/52bGCk77/uptick.png`
-//     }
-    
-//     // return 'https://i.postimg.cc/5NRQrjT8/uptick-toggled.png'
-// }
-
-app.locals.voteCount = function(id) {
-    let votes = 'as'
-    db.query(`SELECT upvotes FROM posts WHERE id = ${id};`, (err, result) => {
-        if (err) {
-            console.log(err)
-        }
-        console.log(result.rows[0].upvotes)
-        votes = result.rows[0].upvotes
-        return votes
-    })
-}
-
 app.locals.timeDifference = function (currDate) {
     let date = new Date();
     date = new Date(date.toISOString().slice(0, 19).replace('T', ' '))
@@ -177,9 +135,6 @@ app.post('/posts', (req, res) => {
     let subreedit = req.body.subreedit
     let upvotes = req.body.upvotes
     let time = currentDate.toISOString().slice(0, 19).replace('T', ' ')
-
-    // console.log(time.toLocaleString())
-    // console.log(req.body)
 
     const sql = `
     INSERT INTO posts
@@ -282,6 +237,7 @@ app.get('/posts/:id', (req, res) => {
 })
 
 app.delete('/posts/:id', (req, res) => {
+    let id = req.params.id
     const sql = `
     DELETE FROM posts
     WHERE id = $1
@@ -293,7 +249,16 @@ app.delete('/posts/:id', (req, res) => {
             console.log(err) 
             res.send("error")
         }
-        res.redirect('/')
+        let sql = `
+        DELETE FROM votetracker 
+        WHERE post_id = $1
+        `
+        db.query(sql, [id], (err, result) => {
+            if (err) {
+                console.log(err)
+            }
+            res.redirect('/')
+        })
     })
 })
 
@@ -497,9 +462,10 @@ app.post('/users', (req, res) => {
                 if (err) {
                     console.log(err)
                 } else {
-                    console.log('user created!')
+                    console.log(result)
+                    console.log(result.rows[0].username)
                     req.session.userId = result.rows[0].id
-                    req.session.username = result.rows[0].username
+                    req.session.username = user
                     res.redirect('/')
                 }
             })
@@ -676,7 +642,9 @@ app.post('/downvote', ensureLoggedIn, (req, res) => {
     })
 })
 
-
+app.get('/loginprompt', (req, res) => {
+    res.render('loginprompt')
+})
 
 
 

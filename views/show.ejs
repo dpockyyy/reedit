@@ -28,24 +28,33 @@
                     <p class="show-description"><%= post.description %> </p>
                     
                     <% if (currentUser === post.username) { %> 
-                        <form action="/posts/<%= post.id %>?_method=delete" method="post">
-                            <button>delete</button>
-                        </form>
-                       
-                        <a href="/posts/<%= post.id %>/edit">edit post</a>
+                        <div class="show-comment">
+                            <p class="edit-spacer">
+                                <a href="/posts/<%= post.id %>/edit">Edit Post</a>
+                            </p>
+
+                            <form action="/posts/<%= post.id %>?_method=delete" method="post">
+                                <button class="show-button">Delete</button>
+                            </form>
+                           
+
+                        </div>
                     <% } %>
                     
                     <% if (currentUser) { %>
-                        <p>Comment as <%= currentUser %></p>
+                        <p>Comment as <span class="show-user"><a href="/user/<%=currentUser %>"><%= currentUser %></span></a></p>
                         
                     <% } else { %>
-                        Please <a href="/login">login</a> to leave a comment
+                        Please <a href="/login" class="home-login">login</a> to leave a comment
                     <% } %>
                             <div class="comment-window">
                                 <form action="/comments" method="post">
                                     <textarea name="description" class="comment-box" placeholder="What are your thoughts?"></textarea>
                                     <input type="hidden" name="postId" value="<%= post.id %>">
-                                    <button>Comment</button>
+                                    <div class="show-comment">
+
+                                        <button class="show-button">Comment</button>
+                                    </div>
                                 </form>
                             </div>
                             
@@ -56,11 +65,14 @@
                                 <div class="comment-card">
                                     <p class="comment-sig"><a href='/user/<%= comment.username %>'><%= comment.username %></a><span class="user-sig"> <%= timeDifference(comment.time) %></span></p>
                                     <p class="comment-description"><%= comment.description %></p>
-                                    <p class="comment-interface">^ 0 v Reply Share</p>
+                                    <!-- <p class="comment-interface">^ 0 v Reply Share</p> -->
                                 </div>
                             <% } %>
                         <% } else { %>
-                            <p>No comments yet</p>
+                            <div class="no-comment-window">
+                                <p class="no-comment">No Comments Yet</p>
+                                <p>Be the first to share what you think!</p>
+                            </div>
                         <% } %>
                     </div>
 

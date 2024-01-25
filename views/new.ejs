@@ -1,14 +1,26 @@
-<h1>create new post</h1>
+<div class="login-panel">
+    <div class="new-window">
+        <div class="login-bar">
+            <h2 class="login-title">Create New Post</h2>
+            <p class="back-button"><a href="javascript:history.back()">X</a></p>
+        </div>
+        
+        <form action="/posts" method="post">
+            <input type="text" name="subreedit" class="login-input" placeholder="Choose a community*">
+            <br>
+            <input type="text" name="title" class="login-input" placeholder="Title*">
+            <br>
+            <input type="text" name="image_url" class="login-input" placeholder="Image URL (optional)">
+            <br>
+            <textarea name="description" placeholder="Text (optional)" class="new-description"></textarea>
+            <br>
+            <input type="hidden" name="upvotes" value="0">
+            <button class="login-input">Post</button>
+        </form>
 
-<form action="/posts" method="post">
-    <label for="">Choose a community</label>
-    <input type="text" name="subreedit">
-    <label for="">title</label>
-    <input type="text" name="title">
-    <label for="">image url</label>
-    <input type="text" name="image_url">
-    <label for="">description</label>
-    <textarea name="description"></textarea>
-    <input type="hidden" name="upvotes" value="0">
-    <button>post</button>
-</form>
+
+    </div>
+</div>
+
+
+
