@@ -112,6 +112,15 @@ a {
     margin-top: 1vw;
 }
 
+.aside-view {
+    background-color: white;
+    align-self: flex-start;
+    text-align: left;
+    margin-top: 1vw;
+    padding: 0.5vw;
+    border-radius: 0.2vw;
+}
+
 .aside-window, .aside-copyright{
     border-radius: 0.2vw;
     padding: 0.5vw;
