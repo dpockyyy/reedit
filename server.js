@@ -78,7 +78,7 @@ app.get('/posts', (req, res) => {
                 posts: posts
             })
             
-        }, '100');
+        }, '200');
         
     })
 })
@@ -229,7 +229,7 @@ app.get('/posts/:id', (req, res) => {
                     post: post,
                     comments: comments,
                 }) 
-            }, '100');
+            }, '200');
             })
             
         })
@@ -311,7 +311,7 @@ app.get('/user/:username', (req, res) => {
                 posts: posts
             })
             
-        }, '100');
+        }, '200');
     })
 })
 
@@ -363,7 +363,7 @@ app.get('/r/:subreedit', (req, res) => {
                 posts: posts
             })
             
-        }, '100');
+        }, '200');
     })
     
 })
