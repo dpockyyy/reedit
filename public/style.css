@@ -152,6 +152,7 @@ a {
     display: grid;
     grid-template-columns: 0.2fr 5fr;
     border-radius: 0.2vw;
+    padding-right: 1vw;
 }
 
 .post-topper {
