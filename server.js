@@ -102,7 +102,7 @@ app.locals.timeDifference = function (currDate) {
         } else {
             return `${Math.ceil(seconds/60/60)} hrs ago`
         }
-    } else if (seconds / 60 / 60 / 24 < 1) {
+    } else if (seconds / 60 / 60 / 24 < 30) {
         if (seconds/ 60/ 60/ 24 <= 1) {
             return `${Math.ceil(seconds/60/60/24)} day ago`
         } else {
