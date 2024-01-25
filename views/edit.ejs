@@ -5,13 +5,13 @@
             <p class="back-button"><a href="javascript:history.back()">X</a></p>
         </div>
         
-        <form action="/posts" method="post">
+        <form action="/posts/<%= post.id %>?_method=put" method="post">
             
             <input type="text" name="title" class="login-input" value="<%= post.title %>" placeholder="Title*">
             <br>
             <input type="text" name="image_url" class="login-input" value="<%= post.image_url %>" placeholder="Image URL (optional)">
             <br>
-            <textarea name="description" <%= post.description %> class="new-description" placeholder="Text (optional)"></textarea>
+            <textarea name="description" <%= post.description %> class="new-description" placeholder="Text (optional)"><%= post.description %></textarea>
             <br>
             <input type="hidden" name="upvotes" value="0">
             <button class="login-input">Submit</button>

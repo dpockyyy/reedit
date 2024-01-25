@@ -136,19 +136,23 @@ app.post('/posts', (req, res) => {
     let upvotes = req.body.upvotes
     let time = currentDate.toISOString().slice(0, 19).replace('T', ' ')
 
-    const sql = `
-    INSERT INTO posts
-    (title, upvotes, image_url, description, username, subreedit, time)
-    VALUES
-    ($1, $2, $3, $4, $5, $6, $7);
-    `
-
-    db.query(sql, [title, upvotes, imageUrl, description, username, subreedit, time], (err, result) => {
-        if (err) {
-            console.log(err) 
-        }
-        res.redirect('/posts')
-    })
+    if (req.body.title === '' || req.body.subreedit === '') {
+        res.redirect('/posts/new')
+    } else {
+        const sql = `
+        INSERT INTO posts
+        (title, upvotes, image_url, description, username, subreedit, time)
+        VALUES
+        ($1, $2, $3, $4, $5, $6, $7);
+        `
+    
+        db.query(sql, [title, upvotes, imageUrl, description, username, subreedit, time], (err, result) => {
+            if (err) {
+                console.log(err) 
+            }
+            res.redirect('/posts')
+        })
+    }
 })
 
 app.get('/posts/:id/edit', (req, res) => {
@@ -171,20 +175,24 @@ app.put('/posts/:id', (req, res) => {
     let imageUrl = req.body.image_url
     let description = req.body.description
 
-    const sql = `
-    UPDATE posts
-    SET
-        title = $1,
-        image_url = $2,
-        description = $3
-    WHERE id = $4;
-    `
-    db.query(sql, [title, imageUrl, description, req.params.id], (err, result) => {
-        if (err) {
-            console.log(err)
-        }
-        res.redirect(`/posts/${req.params.id}`)
-    })
+    if (title === '') {
+        res.redirect(`/posts/${req.params.id}/edit`)
+    } else {
+        const sql = `
+        UPDATE posts
+        SET
+            title = $1,
+            image_url = $2,
+            description = $3
+        WHERE id = $4;
+        `
+        db.query(sql, [title, imageUrl, description, req.params.id], (err, result) => {
+            if (err) {
+                console.log(err)
+            }
+            res.redirect(`/posts/${req.params.id}`)
+        })
+    }
 })
 
 app.get('/posts/:id', (req, res) => {
@@ -447,30 +455,36 @@ app.post('/users', (req, res) => {
     let user = req.body.username
     let email = req.body.email
     let plainTextPass = req.body.password
-    const saltRound = 10
 
-    bcrypt.genSalt(saltRound, (err, salt) => {
-        bcrypt.hash(plainTextPass, salt, (err, hashedPass) => {
-            const sql = `
-                INSERT INTO
-                users (username, email, password_digest)
-                VALUES
-                ($1, $2, $3)
-                RETURNING id;
-            `
-            db.query(sql, [user, email, hashedPass], (err, result) => {
-                if (err) {
-                    console.log(err)
-                } else {
-                    console.log(result)
-                    console.log(result.rows[0].username)
-                    req.session.userId = result.rows[0].id
-                    req.session.username = user
-                    res.redirect('/')
-                }
+
+    if(user === '' || email === '' || plainTextPass === '') {
+        res.redirect('/signup')
+    } else {
+        const saltRound = 10
+    
+        bcrypt.genSalt(saltRound, (err, salt) => {
+            bcrypt.hash(plainTextPass, salt, (err, hashedPass) => {
+                const sql = `
+                    INSERT INTO
+                    users (username, email, password_digest)
+                    VALUES
+                    ($1, $2, $3)
+                    RETURNING id;
+                `
+                db.query(sql, [user, email, hashedPass], (err, result) => {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        console.log(result)
+                        console.log(result.rows[0].username)
+                        req.session.userId = result.rows[0].id
+                        req.session.username = user
+                        res.redirect('/')
+                    }
+                })
             })
         })
-    })
+    }
 })
 
 app.post('/upvote', ensureLoggedIn, (req, res) => {
