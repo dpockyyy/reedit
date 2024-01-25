@@ -97,29 +97,29 @@ app.locals.timeDifference = function (currDate) {
     } else if (seconds / 60 < 60) {
         return `${Math.round(seconds/60)} mins ago`
     } else if (seconds / 60 / 60 < 24) {
-        if (seconds/60/60 < 2) {
-            return `${Math.round(seconds/60/60)} hr ago`
+        if (seconds/60/60 <= 1) {
+            return `${Math.ceil(seconds/60/60)} hr ago`
         } else {
-            return `${Math.round(seconds/60/60)} hrs ago`
+            return `${Math.ceil(seconds/60/60)} hrs ago`
         }
     } else if (seconds / 60 / 60 / 24 < 1) {
-        if (seconds/ 60/ 60/ 24 < 2) {
-            return `${Math.round(seconds/60/60/24)} day ago`
+        if (seconds/ 60/ 60/ 24 <= 1) {
+            return `${Math.ceil(seconds/60/60/24)} day ago`
         } else {
-            return `${Math.round(seconds/60/60/24)} days ago`
+            return `${Math.ceil(seconds/60/60/24)} days ago`
         }
     } else if (seconds / 60 / 60 / 24 / 30 < 12) {
-        if (seconds/ 60 / 60 / 24 / 30 < 2) {
-            return `${Math.round(seconds/60/60/24/30)} month ago`
+        if (seconds/ 60 / 60 / 24 / 30 <= 1) {
+            return `${Math.ceil(seconds/60/60/24/30)} month ago`
         } else {
-            return `${Math.round(seconds/60/60/24/30)} months ago`
+            return `${Math.ceil(seconds/60/60/24/30)} months ago`
         }
        
     } else {
-        if (seconds/ 60 / 60 / 24 / 30 / 12 < 2) {
-            return `${Math.round(seconds/60/60/24/30/12)} year ago`
+        if (seconds/ 60 / 60 / 24 / 30 / 12 <= 1) {
+            return `${Math.ceil(seconds/60/60/24/30/12)} year ago`
         } else {
-            return `${Math.round(seconds/60/60/24/30/12)} years ago`
+            return `${Math.ceil(seconds/60/60/24/30/12)} years ago`
         }
     }
 }
